@@ -1,0 +1,33 @@
+
+[TWAutoscalarConf]
+
+# AutoScaler.Enable
+# Enable or disable instance auto-scaling. 0 = off, 1 = on.
+TWAutoScale.Enable = 1
+
+# AutoScaler scalar clamp values for instances of different sizes.
+# In 5-player instances, the normal 5-man values are the trash/default floors.
+TWAutoScale.ScalarMin5ManHP = 0.45
+TWAutoScale.ScalarMin5ManDMG = 0.30
+
+# Optional separate floors for configured 5-player dungeon bosses.
+TWAutoScale.ScalarMin5ManBossHP = 0.70
+TWAutoScale.ScalarMin5ManBossDMG = 0.42
+
+# Comma-separated creature entry IDs treated as 5-player dungeon bosses.
+# Initial controlled test set: Ragefire Chasm.
+TWAutoScale.Scalar5ManBossCreatureIds = 11517,11518,11519,11520
+
+TWAutoScale.ScalarMin10ManHP = 0.3
+TWAutoScale.ScalarMin10ManDMG = 0.3
+TWAutoScale.ScalarMin20ManHP = 0.1
+TWAutoScale.ScalarMin20ManDMG = 0.1
+TWAutoScale.ScalarMin40ManHP = 0.01
+TWAutoScale.ScalarMin40ManDMG = 0.01
+
+# AutoScaler XP scaling for solo play in 5-player instances.
+# When enabled, solo dungeon kill XP is scaled to approximate
+# the XP received by one member of a normal equal-level 5-player group.
+# Quest, exploration, outdoor and actual group XP are unaffected.
+TWAutoScale.ScaleXP = 1
+TWAutoScale.Scalar5ManXP = 0.28
