@@ -56,6 +56,21 @@ namespace
         {
             return sConfig.GetBoolDefault("TWAutoScale.Enable", false);
         }
+        uint32 GetScalingMaxPlayers(DungeonMap const* dungeonMap) const
+        {
+            if (!dungeonMap)
+                return 1;
+
+            // Turtle/Vanilla dungeon DBC entries can retain historical
+            // admission caps such as Deadmines = 10. For autoscaling,
+            // ordinary non-raid dungeons belong to the 5-player bucket.
+            if (!dungeonMap->IsRaid())
+                return 5;
+
+            // Raids retain their real DBC capacity so the 10/20/40-player
+            // scaling buckets continue to behave normally.
+            return std::max<uint32>(dungeonMap->GetMaxPlayers(), 1);
+        }
 
         void ScaleMap(Map* map)
         {
@@ -70,7 +85,7 @@ namespace
             if (!playerCount)
                 return;
 
-            uint32 const maxCount = dungeonMap->GetMaxPlayers();
+            uint32 const maxCount = GetScalingMaxPlayers(dungeonMap);
 
             auto& lock = dungeonMap->GetObjectLock();
             ReadMutexGuard guard(lock);
@@ -100,7 +115,7 @@ namespace
             if (!playerCount)
                 return;
 
-            ScaleCreature(creature, playerCount, dungeonMap->GetMaxPlayers());
+            ScaleCreature(creature, playerCount, GetScalingMaxPlayers(dungeonMap));
         }
 
         void ScaleCreature(Creature* creature, uint32 playerCount, uint32 maxCount)
@@ -170,7 +185,7 @@ namespace
             if (!dungeonMap)
                 return;
 
-            uint32 const maxCount = std::max<uint32>(dungeonMap->GetMaxPlayers(), 1);
+            uint32 const maxCount = std::max<uint32>(GetScalingMaxPlayers(dungeonMap), 1);
             uint32 const playerCount = dungeonMap->GetPlayersCountExceptGMs();
             uint32 const clampedPlayers = std::min<uint32>(std::max<uint32>(playerCount, 1), maxCount);
             float const goldFactor = static_cast<float>(clampedPlayers) / static_cast<float>(maxCount);
@@ -202,7 +217,7 @@ namespace
             if (playerCount != 1)
                 return;
 
-            uint32 const maxCount = std::max<uint32>(dungeonMap->GetMaxPlayers(), 1);
+            uint32 const maxCount = std::max<uint32>(GetScalingMaxPlayers(dungeonMap), 1);
             if (maxCount > 5)
                 return;
 
@@ -324,7 +339,7 @@ namespace
                 return 1.0f;
 
             uint32 const maxPlayers = std::max<uint32>(
-                dungeonMap->GetMaxPlayers(),
+                GetScalingMaxPlayers(dungeonMap),
                 1);
 
             // V1 final-damage scaling is deliberately limited to
